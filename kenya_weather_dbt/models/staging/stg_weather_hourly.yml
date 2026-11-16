@@ -1,0 +1,23 @@
+
+version: 2
+
+models:
+  - name: stg_weather_hourly
+    description: "Flattened hourly weather records extracted from raw API responses."
+
+    columns:
+      - name: response_id
+        data_tests:
+          - not_null
+
+      - name: location_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: source('raw', 'locations')
+                field: location_id
+
+      - name: weather_timestamp
+        data_tests:
+          - not_null

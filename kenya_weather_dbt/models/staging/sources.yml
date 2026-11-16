@@ -1,0 +1,14 @@
+
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: "Raw data ingested from the Open-Meteo Historical Weather API."
+
+    tables:
+      - name: weather_api_responses
+        description: "Original API responses stored as JSONB."
+
+      - name: locations
+        description: "Reference data for the five Kenyan weather locations."

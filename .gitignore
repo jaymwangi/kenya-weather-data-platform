@@ -22,3 +22,9 @@ __pycache__/
 # Operating system
 .DS_Store
 Thumbs.db
+
+# dbt generated files
+kenya_weather_dbt/target/
+kenya_weather_dbt/dbt_packages/
+kenya_weather_dbt/logs/
+logs/
