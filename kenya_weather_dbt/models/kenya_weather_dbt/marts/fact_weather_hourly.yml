@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: fact_weather_hourly
+    description: "Hourly weather observations for the configured Kenyan locations."
+
+    columns:
+      - name: location_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_locations')
+                field: location_id
+
+      - name: weather_timestamp
+        data_tests:
+          - not_null
+
+      - name: response_id
+        data_tests:
+          - not_null
+
+    data_tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - location_id
+              - weather_timestamp

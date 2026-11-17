@@ -18,14 +18,15 @@ clean-targets:
 
 models:
   kenya_weather_dbt:
-    staging:
-      +schema: staging
-      +materialized: view
+    kenya_weather_dbt:
+      staging:
+        +schema: staging
+        +materialized: view
 
-    intermediate:
-      +schema: intermediate
-      +materialized: view
+      intermediate:
+        +schema: analytics
+        +materialized: view
 
-    marts:
-      +schema: analytics
-      +materialized: table
+      marts:
+        +schema: analytics
+        +materialized: table

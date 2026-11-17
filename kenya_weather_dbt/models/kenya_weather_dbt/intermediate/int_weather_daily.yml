@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: int_weather_daily
+    description: "Daily weather statistics aggregated from hourly observations."
+
+    columns:
+      - name: location_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: source('raw', 'locations')
+                field: location_id
+
+      - name: weather_date
+        data_tests:
+          - not_null
+
+      - name: observation_count
+        data_tests:
+          - not_null

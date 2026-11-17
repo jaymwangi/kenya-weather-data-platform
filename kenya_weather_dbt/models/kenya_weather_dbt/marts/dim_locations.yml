@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: dim_locations
+    description: "Dimension table containing the five configured Kenyan weather locations."
+
+    columns:
+      - name: location_id
+        data_tests:
+          - unique
+          - not_null
+
+      - name: location_name
+        data_tests:
+          - unique
+          - not_null
+
+      - name: country
+        data_tests:
+          - not_null
+
+      - name: latitude
+        data_tests:
+          - not_null
+
+      - name: longitude
+        data_tests:
+          - not_null
