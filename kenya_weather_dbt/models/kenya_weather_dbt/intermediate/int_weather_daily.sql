@@ -1,4 +1,42 @@
-WITH hourly_weather AS (
+
+WITH ranked_hourly_weather AS (
+
+    SELECT
+        location_id,
+        weather_timestamp,
+        response_id,
+        weather_timezone,
+        temperature_2m,
+        relative_humidity_2m,
+        precipitation,
+        wind_speed_10m,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY location_id, weather_timestamp
+            ORDER BY response_id DESC
+        ) AS observation_rank
+
+    FROM {{ ref('stg_weather_hourly') }}
+
+),
+
+deduplicated_hourly_weather AS (
+
+    SELECT
+        location_id,
+        weather_timestamp,
+        weather_timezone,
+        temperature_2m,
+        relative_humidity_2m,
+        precipitation,
+        wind_speed_10m
+
+    FROM ranked_hourly_weather
+    WHERE observation_rank = 1
+
+),
+
+hourly_weather AS (
 
     SELECT
         location_id,
@@ -9,7 +47,7 @@ WITH hourly_weather AS (
         precipitation,
         wind_speed_10m
 
-    FROM {{ ref('stg_weather_hourly') }}
+    FROM deduplicated_hourly_weather
 
 ),
 
