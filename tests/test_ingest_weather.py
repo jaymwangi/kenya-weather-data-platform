@@ -8,6 +8,7 @@ from src.pipeline.ingest_weather import (
     backfill_all_locations,
     ingest_all_locations,
     ingest_location_weather,
+    run_daily_ingestion,
 )
 
 
@@ -236,3 +237,57 @@ def test_ingest_location_weather_records_api_failure(
     assert failure_parameters["run_id"] == 42
 
     mock_create_engine.return_value.dispose.assert_called_once()
+
+
+@patch("src.pipeline.ingest_weather.ingest_all_locations")
+@patch("src.pipeline.ingest_weather.date")
+def test_run_daily_ingestion_uses_last_seven_completed_days(
+    mock_date,
+    mock_ingest_all,
+):
+    mock_date.today.return_value = date(2026, 11, 18)
+    mock_ingest_all.return_value = {"Nairobi": 101}
+
+    results = run_daily_ingestion()
+
+    mock_ingest_all.assert_called_once_with(
+        start_date=date(2026, 11, 11),
+        end_date=date(2026, 11, 17),
+    )
+
+    assert results == {"Nairobi": 101}
+
+
+@patch("src.pipeline.ingest_weather.ingest_all_locations")
+def test_run_daily_ingestion_uses_custom_date_window(
+    mock_ingest_all,
+):
+    mock_ingest_all.return_value = {"Nairobi": 102}
+
+    results = run_daily_ingestion(
+        run_date=date(2026, 11, 18),
+        rolling_days=3,
+    )
+
+    mock_ingest_all.assert_called_once_with(
+        start_date=date(2026, 11, 15),
+        end_date=date(2026, 11, 17),
+    )
+
+    assert results == {"Nairobi": 102}
+
+
+@patch("src.pipeline.ingest_weather.ingest_all_locations")
+def test_run_daily_ingestion_rejects_invalid_rolling_days(
+    mock_ingest_all,
+):
+    with pytest.raises(
+        ValueError,
+        match="rolling_days must be at least 1.",
+    ):
+        run_daily_ingestion(
+            run_date=date(2026, 11, 18),
+            rolling_days=0,
+        )
+
+    mock_ingest_all.assert_not_called()

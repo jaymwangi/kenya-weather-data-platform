@@ -230,6 +230,32 @@ def backfill_all_locations(
     return results
 
 
+def run_daily_ingestion(
+    run_date: date | None = None,
+    rolling_days: int = 7,
+) -> dict[str, int]:
+    """Ingest the most recent completed days for all locations."""
+
+    if rolling_days < 1:
+        raise ValueError("rolling_days must be at least 1.")
+
+    if run_date is None:
+        run_date = date.today()
+
+    end_date = run_date - timedelta(days=1)
+    start_date = end_date - timedelta(days=rolling_days - 1)
+
+    print(
+        f"\nStarting daily ingestion: "
+        f"{start_date} to {end_date}"
+    )
+
+    return ingest_all_locations(
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+
 if __name__ == "__main__":
     results = ingest_all_locations(
         start_date=date(2026, 1, 1),
