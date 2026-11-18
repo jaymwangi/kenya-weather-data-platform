@@ -1,4 +1,4 @@
-
+{{ config(materialized='table') }}
 WITH source_responses AS (
 
     SELECT
